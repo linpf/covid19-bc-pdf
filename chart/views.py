@@ -8,7 +8,18 @@ from django.template.loader import get_template
 from django.http import HttpResponse
 import pdfkit
 
+def _get_pdfkit_config():
+     """wkhtmltopdf lives and functions differently depending on Windows or Linux. We
+      need to support both since we develop on windows but deploy on Heroku.
 
+     Returns:
+         A pdfkit configuration
+     """
+     if platform.system() == 'Windows':
+         return pdfkit.configuration(wkhtmltopdf=os.environ.get('WKHTMLTOPDF_BINARY', 'C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe'))
+     else:
+         WKHTMLTOPDF_CMD = subprocess.Popen(['which', os.environ.get('WKHTMLTOPDF_BINARY', 'wkhtmltopdf')], stdout=subprocess.PIPE).communicate()[0].strip()
+         return pdfkit.configuration(wkhtmltopdf=WKHTMLTOPDF_CMD)
 
 @cache_page(60 * 15)
 def home_view(request):
@@ -64,7 +75,7 @@ def pdf_view(request):
     #charts = bccdc_cases_and_mortality_charts(request)
     charts = bccdc_lab_tests_charts(request,"HA")
     
-    config = pdfkit.configuration(wkhtmltopdf='./bin/wkhtmltopdf')
+    #config = pdfkit.configuration(wkhtmltopdf='./bin/wkhtmltopdf')
     
     options = {
         'dpi': 1200,
@@ -80,7 +91,7 @@ def pdf_view(request):
     template = get_template('pdf/charts.html')
     rendered= template.render(context)
 
-    pdf = pdfkit.from_string(rendered, False, css="pdf.css", options=options, configuration=config)
+    pdf = pdfkit.from_string(rendered, False, css="pdf.css", options=options, configuration=configuration=_get_pdfkit_config())
     response = HttpResponse(pdf, content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename=' + file_name
     return response
