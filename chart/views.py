@@ -80,7 +80,7 @@ def pdf_view(request):
     template = get_template('pdf/charts.html')
     rendered= template.render(context)
 
-    pdf = pdfkit.from_string(rendered, False, css="pdf.css", options=options)
+    pdf = pdfkit.from_string(rendered, False, css="pdf.css", options=options, configuration=config)
     response = HttpResponse(pdf, content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename=' + file_name
     return response
