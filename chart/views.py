@@ -9,6 +9,7 @@ from django.http import HttpResponse
 import pdfkit
 
 
+
 @cache_page(60 * 15)
 def home_view(request):
 
@@ -62,6 +63,8 @@ def pdf_view(request):
     
     #charts = bccdc_cases_and_mortality_charts(request)
     charts = bccdc_lab_tests_charts(request,"HA")
+    
+    config = pdfkit.configuration(wkhtmltopdf='./bin/wkhtmltopdf')
     
     options = {
         'dpi': 1200,
