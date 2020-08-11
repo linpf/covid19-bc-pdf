@@ -1,0 +1,17 @@
+<html>
+    <head>
+        <meta name="pdfkit-page-size" content="A0"/>
+        <meta name="pdfkit-orientation" content="Landscape"/>
+        <meta name="pdfkit-margin-top" content="0.25in"/>
+        <meta name="pdfkit-margin-bottom" content="0.25in"/>
+        <meta name="pdfkit-margin-left" content="0.25in"/>
+        <meta name="pdfkit-margin-right" content="0.25in"/>
+    </head>
+    <body>
+        {% for chart in charts %}
+            <div class="break-after">
+                <embed type="image/svg+xml" src= {{ chart|safe }} />
+            </div>
+        {% endfor %}
+    </body>
+</html>

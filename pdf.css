@@ -1,0 +1,7 @@
+@media screen, print {
+
+   .page {
+       page-break-after: always !important;
+   }
+
+}
